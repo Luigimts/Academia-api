@@ -1,111 +1,65 @@
 import { useState, useEffect } from "react"
 
+
 function Agendamentos(){
 
-const [alunos,setAlunos] = useState([])
-const [instrutores,setInstrutores] = useState([])
+  const [alunos,setAlunos] = useState([])
+  const [instrutores,setInstrutores] = useState([])
 
-const [alunoId,setAlunoId] = useState("")
-const [instrutorId,setInstrutorId] = useState("")
-const [data,setData] = useState("")
-const [horario,setHorario] = useState("")
+  const [alunoId,setAlunoId] = useState("")
+  const [instrutorId,setInstrutorId] = useState("")
+  const [data,setData] = useState("")
+  const [horario,setHorario] = useState("")
 
-useEffect(()=>{
+  useEffect(()=>{
+    fetch("http://localhost:8080/alunos")
+      .then(res => res.json())
+      .then(data => setAlunos(data))
 
-fetch("http://localhost:8080/alunos")
-.then(res => res.json())
-.then(data => setAlunos(data))
+    fetch("http://localhost:8080/instrutores")
+      .then(res => res.json())
+      .then(data => setInstrutores(data))
+  },[])
 
-fetch("http://localhost:8080/instrutores")
-.then(res => res.json())
-.then(data => setInstrutores(data))
+  async function criarAgendamento(){
+    await fetch("http://localhost:8080/agendamentos",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        alunoId:Number(alunoId),
+        instrutorId:Number(instrutorId),
+        data:data,
+        horario:horario
+      })
+    })
+    alert("Agendamento criado!")
+  }
 
-},[])
+  return(
+    <div className="agendamento-container">
 
-async function criarAgendamento(){
+      <h2>Novo Agendamento</h2>
 
-await fetch("http://localhost:8080/agendamentos",{
+      <select onChange={(e)=>setAlunoId(e.target.value)}>
+        <option>Selecione aluno</option>
+        {alunos.map(aluno => (
+          <option key={aluno.id} value={aluno.id}>{aluno.nome}</option>
+        ))}
+      </select>
 
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
+      <select onChange={(e)=>setInstrutorId(e.target.value)}>
+        <option>Selecione instrutor</option>
+        {instrutores.map(instrutor => (
+          <option key={instrutor.id} value={instrutor.id}>{instrutor.nome}</option>
+        ))}
+      </select>
 
-body:JSON.stringify({
+      <input type="date" onChange={(e)=>setData(e.target.value)} />
+      <input type="time" onChange={(e)=>setHorario(e.target.value)} />
 
-alunoId:Number(alunoId),
-instrutorId:Number(instrutorId),
-data:data,
-horario:horario
-
-})
-
-})
-
-alert("Agendamento criado!")
-
-}
-
-return(
-
-<div>
-
-<h2>Novo Agendamento</h2>
-
-<select onChange={(e)=>setAlunoId(e.target.value)}>
-
-<option>Selecione aluno</option>
-
-{alunos.map(aluno => (
-
-<option key={aluno.id} value={aluno.id}>
-{aluno.nome}
-</option>
-
-))}
-
-</select>
-
-<br/><br/>
-
-<select onChange={(e)=>setInstrutorId(e.target.value)}>
-
-<option>Selecione instrutor</option>
-
-{instrutores.map(instrutor => (
-
-<option key={instrutor.id} value={instrutor.id}>
-{instrutor.nome}
-</option>
-
-))}
-
-</select>
-
-<br/><br/>
-
-<input
-type="date"
-onChange={(e)=>setData(e.target.value)}
-/>
-
-<br/><br/>
-
-<input
-type="time"
-onChange={(e)=>setHorario(e.target.value)}
-/>
-
-<br/><br/>
-
-<button onClick={criarAgendamento}>
-Criar Agendamento
-</button>
-
-</div>
-
-)
-
+      <button onClick={criarAgendamento}>Criar Agendamento</button>
+    </div>
+  )
 }
 
 export default Agendamentos
