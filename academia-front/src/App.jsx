@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
 import Banner from "./componentes/Banner";
 import Footer from "./componentes/Footer";
+import Musica from "./componentes/Musica";
 
 // Páginas existentes
 import Alunos from "./pages/Alunos";
@@ -47,7 +48,7 @@ function App() {
         <Route path="/dashboard" element={<AlunoDashboard />} />
         <Route path="/aluno/:id" element={<AlunoDashboard />} />
       </Routes>
-
+      <Musica />
       <Footer />
 
     </>

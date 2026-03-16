@@ -5,15 +5,35 @@ function AlunoDashboard() {
   const [aluno, setAluno] = useState(null);
   const [agendamentos, setAgendamentos] = useState([]);
 
+  function deletarConta() {
+
+    const id = localStorage.getItem("alunoId");
+
+    fetch(`http://localhost:8080/alunos/${id}`, {
+      method: "DELETE"
+    })
+    .then(() => {
+      alert("Conta excluída!");
+      localStorage.removeItem("alunoId");
+      window.location.href = "/login-aluno";
+    });
+
+  }
+
   useEffect(() => {
 
-    // pegar aluno
-    fetch("http://localhost:8080/alunos/1")
+    const id = localStorage.getItem("alunoId");
+
+    if(!id){
+      window.location.href="/login-aluno"
+      return
+    }
+
+    fetch(`http://localhost:8080/alunos/${id}`)
       .then(res => res.json())
       .then(data => setAluno(data));
 
-    // pegar agendamentos do aluno
-    fetch("http://localhost:8080/alunos/1/agendamentos")
+    fetch(`http://localhost:8080/alunos/${id}/agendamentos`)
       .then(res => res.json())
       .then(data => setAgendamentos(data));
 
@@ -58,12 +78,25 @@ function AlunoDashboard() {
 
       <div style={{ marginTop: "20px" }}>
 
-        <button style={{ margin: "10px" }}>
+        <button
+          onClick={() => window.location.href = "/agendamentos"}
+          style={{ margin: "10px" }}
+        >
           Agendar Aula
         </button>
 
-        <button style={{ margin: "10px" }}>
+        <button
+          onClick={() => window.location.href = "/planos"}
+          style={{ margin: "10px" }}
+        >
           Escolher Plano
+        </button>
+
+        <button
+          onClick={deletarConta}
+          style={{ marginTop: "20px", backgroundColor: "red", color: "white" }}
+        >
+          Excluir Conta
         </button>
 
       </div>
